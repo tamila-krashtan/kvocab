@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>kvocab — корейські слова з квокою</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐹</text></svg>">
+</head>
+<body>
+<header>
+  <div class="logo-wrap">
+    <svg id="quokka" viewBox="0 0 120 120" width="64" height="64" aria-label="квока">
+      <!-- ears -->
+      <circle cx="32" cy="30" r="16" fill="#a9825f"/>
+      <circle cx="88" cy="30" r="16" fill="#a9825f"/>
+      <circle cx="32" cy="31" r="9" fill="#7d5b3e"/>
+      <circle cx="88" cy="31" r="9" fill="#7d5b3e"/>
+      <!-- head -->
+      <ellipse cx="60" cy="65" rx="44" ry="42" fill="#b98f68"/>
+      <!-- cheeks -->
+      <ellipse cx="38" cy="78" rx="17" ry="14" fill="#cba888"/>
+      <ellipse cx="82" cy="78" rx="17" ry="14" fill="#cba888"/>
+      <!-- muzzle -->
+      <ellipse cx="60" cy="82" rx="20" ry="16" fill="#d8bb9d"/>
+      <!-- eyes -->
+      <circle cx="42" cy="58" r="6.5" fill="#2b1d12"/>
+      <circle cx="78" cy="58" r="6.5" fill="#2b1d12"/>
+      <circle cx="44" cy="56" r="2" fill="#fff"/>
+      <circle cx="80" cy="56" r="2" fill="#fff"/>
+      <!-- nose -->
+      <ellipse cx="60" cy="74" rx="6" ry="4.5" fill="#3d2a1a"/>
+      <!-- smiling mouth -->
+      <path d="M60 78 Q60 86 50 88" stroke="#3d2a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M60 78 Q60 86 70 88" stroke="#3d2a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- whisker dots -->
+      <circle cx="48" cy="80" r="1.2" fill="#7d5b3e"/><circle cx="52" cy="84" r="1.2" fill="#7d5b3e"/>
+      <circle cx="72" cy="80" r="1.2" fill="#7d5b3e"/><circle cx="68" cy="84" r="1.2" fill="#7d5b3e"/>
+    </svg>
+    <div>
+      <h1>kvocab</h1>
+      <p class="tagline">корейська лексика — з усмішкою квоки</p>
+    </div>
+  </div>
+</header>
+
+<main id="app">
+  <!-- Home / setup screen -->
+  <section id="screen-home">
+    <h2>Режим тренування</h2>
+    <div class="mode-grid">
+      <button class="mode-card" data-mode="ko2tr">
+        <span class="mode-icon">한→🇺🇦</span>
+        <span class="mode-name">Переклад слова</span>
+        <span class="mode-desc">обери переклад корейського слова</span>
+      </button>
+      <button class="mode-card" data-mode="tr2ko">
+        <span class="mode-icon">🇺🇦→한</span>
+        <span class="mode-name">Корейське слово</span>
+        <span class="mode-desc">обери корейське слово за перекладом</span>
+      </button>
+      <button class="mode-card" data-mode="type">
+        <span class="mode-icon">⌨️</span>
+        <span class="mode-name">Введення</span>
+        <span class="mode-desc">введи корейське слово (є екранна клавіатура)</span>
+      </button>
+      <button class="mode-card" data-mode="flash">
+        <span class="mode-icon">🃏</span>
+        <span class="mode-name">Картки</span>
+        <span class="mode-desc">переглядай слова як флеш-картки</span>
+      </button>
+    </div>
+
+    <h2>Теми <button id="topics-all" class="linklike">всі / жодна</button></h2>
+    <div id="topic-chips" class="chips"></div>
+
+    <div class="setup-row">
+      <label for="qcount">Слів у раунді:</label>
+      <select id="qcount">
+        <option value="10" selected>10</option>
+        <option value="20">20</option>
+        <option value="all">усі</option>
+      </select>
+      <span id="pool-info" class="pool-info"></span>
+    </div>
+
+    <button id="start-btn" class="primary big">Почати</button>
+  </section>
+
+  <!-- Quiz screen -->
+  <section id="screen-quiz" hidden>
+    <div class="quiz-top">
+      <span id="progress"></span>
+      <span id="score"></span>
+      <button id="quit-btn" class="linklike">завершити</button>
+    </div>
+    <div class="qcard">
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="type-area" hidden>
+        <input id="answer-input" type="text" lang="ko" autocomplete="off" autocapitalize="off"
+               spellcheck="false" placeholder="введи корейське слово...">
+        <button id="check-btn" class="primary">Перевірити</button>
+        <button id="kb-toggle" title="екранна клавіатура">⌨️</button>
+        <div id="keyboard" hidden></div>
+      </div>
+      <div id="feedback" hidden></div>
+      <button id="next-btn" class="primary" hidden>Далі →</button>
+    </div>
+  </section>
+
+  <!-- Flashcards screen -->
+  <section id="screen-flash" hidden>
+    <div class="quiz-top">
+      <span id="flash-progress"></span>
+      <button id="flash-quit" class="linklike">завершити</button>
+    </div>
+    <div id="flash-card" class="flashcard" title="натисни, щоб перевернути">
+      <div id="flash-front" class="flash-face"></div>
+      <div id="flash-back" class="flash-face" hidden></div>
+    </div>
+    <div class="flash-nav">
+      <button id="flash-prev">←</button>
+      <button id="flash-flip" class="primary">Перевернути</button>
+      <button id="flash-next">→</button>
+    </div>
+  </section>
+
+  <!-- Results screen -->
+  <section id="screen-end" hidden>
+    <h2 id="end-title"></h2>
+    <p id="end-stats"></p>
+    <div id="end-mistakes"></div>
+    <button id="again-btn" class="primary big">Ще раз</button>
+    <button id="home-btn" class="big">На головну</button>
+  </section>
+</main>
+
+<footer>
+  <p><span id="total-count"></span> слів із зошита · зроблено з 🤎 та квокою</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
