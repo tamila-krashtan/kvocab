@@ -77,12 +77,7 @@ document.querySelectorAll(".mode-card").forEach((card) => {
 document.querySelector('.mode-card[data-mode="ko2tr"]').classList.add("selected");
 
 $("topics-all").onclick = () => {
-  selectedTopics = new Set(TOPICS);
-  renderTopics();
-  updatePoolInfo();
-};
-$("topics-none").onclick = () => {
-  selectedTopics = new Set();
+  selectedTopics = selectedTopics.size === TOPICS.length ? new Set() : new Set(TOPICS);
   renderTopics();
   updatePoolInfo();
 };
