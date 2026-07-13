@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(command -v convert magick mogrify)",
+      "Bash(mkdir -p /tmp/claude-1000/-home-tamila-Documents-Ling-kvocab/b5bb62e2-0130-4332-bdab-958fdeb9182b/scratchpad/pages)",
+      "Bash(python3 -c \"import PIL; print\\(PIL.__version__\\)\")",
+      "Bash(command -v ffmpeg)",
+      "Bash(python3 -)",
+      "Bash(node --check app.js)",
+      "Bash(node --check data.js)",
+      "Bash(node -e ' *)",
+      "Bash(python3 /tmp/claude-1000/-home-tamila-Documents-Ling-kvocab/19ad71f6-caa4-4c6b-96c0-f1e62b08a80c/scratchpad/gen_data.py)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'Add list mode with search; separate select-all/reset topic buttons, none selected by default *)"
+    ]
+  }
+}

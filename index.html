@@ -66,9 +66,14 @@
         <span class="mode-name">Картки</span>
         <span class="mode-desc">переглядай слова як флеш-картки</span>
       </button>
+      <button class="mode-card" data-mode="list">
+        <span class="mode-icon">📋</span>
+        <span class="mode-name">Список</span>
+        <span class="mode-desc">усі слова списком, з пошуком</span>
+      </button>
     </div>
 
-    <h2>Теми <button id="topics-all" class="linklike">всі / жодна</button></h2>
+    <h2>Теми <button id="topics-all" class="linklike">обрати всі</button> <button id="topics-none" class="linklike">скинути</button></h2>
     <div id="topic-chips" class="chips"></div>
 
     <div class="setup-row">
@@ -121,6 +126,17 @@
       <button id="flash-flip" class="primary">Перевернути</button>
       <button id="flash-next">→</button>
     </div>
+  </section>
+
+  <!-- Word list screen -->
+  <section id="screen-list" hidden>
+    <div class="quiz-top">
+      <span id="list-count"></span>
+      <button id="list-quit" class="linklike">на головну</button>
+    </div>
+    <input id="list-search" type="text" placeholder="пошук: корейською або переклад..."
+           autocomplete="off" spellcheck="false">
+    <div id="word-list"></div>
   </section>
 
   <!-- Results screen -->

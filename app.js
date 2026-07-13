@@ -28,7 +28,7 @@ function acceptedAnswers(item) {
 
 // ---------- state ----------
 const TOPICS = [...new Set(VOCAB.flatMap((v) => v.topics))];
-let selectedTopics = new Set(TOPICS);
+let selectedTopics = new Set();
 let mode = "ko2tr";
 let pool = [];
 let queue = [];
@@ -77,7 +77,12 @@ document.querySelectorAll(".mode-card").forEach((card) => {
 document.querySelector('.mode-card[data-mode="ko2tr"]').classList.add("selected");
 
 $("topics-all").onclick = () => {
-  selectedTopics = selectedTopics.size === TOPICS.length ? new Set() : new Set(TOPICS);
+  selectedTopics = new Set(TOPICS);
+  renderTopics();
+  updatePoolInfo();
+};
+$("topics-none").onclick = () => {
+  selectedTopics = new Set();
   renderTopics();
   updatePoolInfo();
 };
@@ -85,7 +90,7 @@ $("topics-all").onclick = () => {
 $("start-btn").onclick = startSession;
 
 function show(screen) {
-  ["screen-home", "screen-quiz", "screen-flash", "screen-end"].forEach((s) => {
+  ["screen-home", "screen-quiz", "screen-flash", "screen-list", "screen-end"].forEach((s) => {
     $(s).hidden = s !== screen;
   });
 }
@@ -93,6 +98,13 @@ function show(screen) {
 // ---------- session ----------
 function startSession() {
   pool = currentPool();
+  if (mode === "list") {
+    if (!pool.length) return;
+    show("screen-list");
+    $("list-search").value = "";
+    renderList();
+    return;
+  }
   if (pool.length < 4) return;
   const qc = $("qcount").value;
   const n = qc === "all" ? pool.length : Math.min(parseInt(qc, 10), pool.length);
@@ -282,6 +294,50 @@ $("flash-next").onclick = () => {
   flashIndex = (flashIndex + 1) % queue.length;
   renderFlash();
 };
+
+// ---------- word list ----------
+function renderList() {
+  const q = $("list-search").value.trim().toLowerCase();
+  const words = currentPool().filter(
+    (v) =>
+      !q ||
+      v.ko.toLowerCase().includes(q) ||
+      v.tr.toLowerCase().includes(q) ||
+      (v.note || "").toLowerCase().includes(q)
+  );
+  $("list-count").textContent = `слів: ${words.length}`;
+
+  // групуємо за першою (основною) темою, зберігаючи порядок тем
+  const groups = new Map();
+  words.forEach((v) => {
+    const t = v.topics[0];
+    if (!groups.has(t)) groups.set(t, []);
+    groups.get(t).push(v);
+  });
+
+  const wrap = $("word-list");
+  wrap.innerHTML = "";
+  groups.forEach((items, t) => {
+    const h = document.createElement("h3");
+    h.className = "list-topic";
+    h.textContent = t;
+    wrap.appendChild(h);
+    items.forEach((v) => {
+      const row = document.createElement("div");
+      row.className = "word-row";
+      let extra = "";
+      if (v.pol) extra += `<span class="wr-pol">${escapeHtml(v.pol)}</span>`;
+      if (v.note) extra += `<span class="wr-note">💬 ${escapeHtml(v.note)}</span>`;
+      row.innerHTML =
+        `<span class="wr-ko">${escapeHtml(v.ko)}</span>` +
+        `<span class="wr-tr">${escapeHtml(v.tr)}${extra}</span>`;
+      wrap.appendChild(row);
+    });
+  });
+}
+
+$("list-search").addEventListener("input", renderList);
+$("list-quit").onclick = () => show("screen-home");
 
 // ---------- Korean on-screen keyboard with hangul composition ----------
 const CHO = [..."ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ"];

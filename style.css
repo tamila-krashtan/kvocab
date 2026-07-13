@@ -207,6 +207,26 @@ button:disabled { opacity: .45; cursor: default; }
 .flash-face .sub { display: block; font-size: .95rem; font-weight: 400; color: var(--muted); margin-top: 10px; }
 .flash-nav { display: flex; gap: 10px; justify-content: center; }
 
+/* word list */
+#list-search { width: 100%; font-size: 1rem; margin-bottom: 10px; }
+.list-topic {
+  font-size: .85rem; text-transform: uppercase; letter-spacing: .5px;
+  color: var(--muted); margin: 18px 0 6px; border-bottom: 1px solid var(--border);
+  padding-bottom: 3px;
+}
+.word-row {
+  display: flex; gap: 12px; align-items: baseline;
+  padding: 6px 4px; border-bottom: 1px dashed var(--border);
+}
+.word-row:last-child { border-bottom: none; }
+.wr-ko { font-weight: 700; font-size: 1.05rem; flex: 0 0 auto; min-width: 110px; overflow-wrap: anywhere; }
+.wr-tr { flex: 1; overflow-wrap: anywhere; }
+.wr-pol { color: var(--accent-dark); font-size: .85rem; margin-left: 8px; white-space: nowrap; }
+.wr-note { display: block; color: var(--muted); font-size: .82rem; }
+@media (max-width: 520px) {
+  .wr-ko { min-width: 84px; }
+}
+
 #end-mistakes { margin: 14px 0; }
 #end-mistakes .mist {
   background: var(--card); border: 1px solid var(--border);
