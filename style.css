@@ -50,6 +50,7 @@ body {
 header { padding: 18px 16px 6px; }
 .logo-wrap { display: flex; align-items: center; gap: 14px; max-width: 720px; margin: 0 auto; }
 h1 { margin: 0; font-size: 1.9rem; letter-spacing: .5px; }
+.quokka-note { margin: 2px 0 0; color: var(--muted); font-size: .8rem; font-style: italic; max-width: 420px; }
 .tagline { margin: 0; color: var(--muted); font-size: .9rem; }
 
 main { flex: 1; width: 100%; max-width: 720px; margin: 0 auto; padding: 10px 16px 40px; }
@@ -240,6 +241,7 @@ footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 12p
   header { padding: 10px 12px 0; }
   .logo-wrap svg { width: 42px; height: 42px; }
   h1 { font-size: 1.4rem; }
+  .quokka-note { font-size: .68rem; }
   main { padding: 4px 12px 16px; }
   h2 { margin: 12px 0 6px; font-size: .95rem; }
   .mode-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
