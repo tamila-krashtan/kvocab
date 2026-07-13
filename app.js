@@ -27,7 +27,7 @@ function acceptedAnswers(item) {
 }
 
 // ---------- state ----------
-const TOPICS = [...new Set(VOCAB.map((v) => v.topic))];
+const TOPICS = [...new Set(VOCAB.flatMap((v) => v.topics))];
 let selectedTopics = new Set(TOPICS);
 let mode = "ko2tr";
 let pool = [];
@@ -44,7 +44,7 @@ function renderTopics() {
   const wrap = $("topic-chips");
   wrap.innerHTML = "";
   TOPICS.forEach((t) => {
-    const n = VOCAB.filter((v) => v.topic === t).length;
+    const n = VOCAB.filter((v) => v.topics.includes(t)).length;
     const b = document.createElement("button");
     b.className = "chip" + (selectedTopics.has(t) ? " on" : "");
     b.innerHTML = `${t} <span class="n">${n}</span>`;
@@ -59,7 +59,7 @@ function renderTopics() {
 }
 
 function currentPool() {
-  return VOCAB.filter((v) => selectedTopics.has(v.topic));
+  return VOCAB.filter((v) => v.topics.some((t) => selectedTopics.has(t)));
 }
 
 function updatePoolInfo() {
@@ -150,8 +150,9 @@ function nextQuestion() {
 
 // ---------- multiple choice ----------
 function distractors(item, n) {
-  const sameTopic = pool.filter((v) => v !== item && v.topic === item.topic && v.tr !== item.tr);
-  const others = pool.filter((v) => v !== item && v.topic !== item.topic && v.tr !== item.tr);
+  const shares = (v) => v.topics.some((t) => item.topics.includes(t));
+  const sameTopic = pool.filter((v) => v !== item && shares(v) && v.tr !== item.tr);
+  const others = pool.filter((v) => v !== item && !shares(v) && v.tr !== item.tr);
   const picks = sample(sameTopic, n);
   if (picks.length < n) picks.push(...sample(others, n - picks.length));
   return picks;
