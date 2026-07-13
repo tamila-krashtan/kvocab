@@ -244,7 +244,7 @@ function showFeedback(correct, homonym) {
   if (current.note) html += `<div class="note">💬 ${escapeHtml(current.note)}</div>`;
   if (current.pol) html += `<div class="pol">розмовно-ввічлива форма: <b>${escapeHtml(current.pol)}</b></div>`;
   if (homonym) {
-    html += `<div class="homonym">⚠️ Ти ввела слово, яке теж є в базі: <b>${escapeHtml(homonym.ko)}</b> — ${escapeHtml(homonym.tr)}</div>`;
+    html += `<div class="homonym">⚠️ Введене слово теж є в базі: <b>${escapeHtml(homonym.ko)}</b> — ${escapeHtml(homonym.tr)}</div>`;
   }
   f.innerHTML = html;
   $("next-btn").hidden = false;

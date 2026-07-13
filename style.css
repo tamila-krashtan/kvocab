@@ -42,6 +42,7 @@ body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.45;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -213,3 +214,24 @@ button:disabled { opacity: .45; cursor: default; }
 }
 
 footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 12px; }
+
+/* compact layout on phones so the home screen fits without scrolling */
+@media (max-width: 520px) {
+  header { padding: 10px 12px 0; }
+  .logo-wrap svg { width: 42px; height: 42px; }
+  h1 { font-size: 1.4rem; }
+  main { padding: 4px 12px 16px; }
+  h2 { margin: 12px 0 6px; font-size: .95rem; }
+  .mode-grid { grid-template-columns: 1fr 1fr; gap: 7px; }
+  .mode-card { padding: 8px 10px; border-radius: 11px; }
+  .mode-icon { font-size: 1rem; }
+  .mode-name { font-size: .9rem; }
+  .mode-desc { display: none; }
+  .chips { gap: 5px; }
+  .chip { padding: 3px 9px; font-size: .78rem; }
+  .setup-row { margin: 12px 0; }
+  button.big { padding: 10px 20px; margin-top: 4px; }
+  .qcard { padding: 16px 12px; }
+  .question { font-size: 1.45rem; margin-bottom: 12px; }
+  footer { padding: 6px; }
+}
