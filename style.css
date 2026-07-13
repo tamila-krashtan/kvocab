@@ -216,16 +216,16 @@ button:disabled { opacity: .45; cursor: default; }
   padding-bottom: 3px;
 }
 .word-row {
-  display: flex; gap: 12px; align-items: baseline;
+  display: grid; grid-template-columns: 160px 1fr; gap: 12px; align-items: baseline;
   padding: 6px 4px; border-bottom: 1px dashed var(--border);
 }
 .word-row:last-child { border-bottom: none; }
-.wr-ko { font-weight: 700; font-size: 1.05rem; flex: 0 0 auto; min-width: 110px; overflow-wrap: anywhere; }
-.wr-tr { flex: 1; overflow-wrap: anywhere; }
+.wr-ko { font-weight: 700; font-size: 1.05rem; overflow-wrap: anywhere; }
+.wr-tr { overflow-wrap: anywhere; }
 .wr-pol { color: var(--accent-dark); font-size: .85rem; margin-left: 8px; white-space: nowrap; }
 .wr-note { display: block; color: var(--muted); font-size: .82rem; }
 @media (max-width: 520px) {
-  .wr-ko { min-width: 84px; }
+  .word-row { grid-template-columns: 104px 1fr; gap: 8px; }
 }
 
 #end-mistakes { margin: 14px 0; }
