@@ -257,3 +257,11 @@ footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 12p
   .question { font-size: 1.45rem; margin-bottom: 12px; }
   footer { padding: 6px; }
 }
+
+/* pronunciation buttons */
+button.say-btn {
+  background: none; border: none; padding: 0 4px; margin-left: 4px;
+  font-size: .8em; line-height: 1; vertical-align: middle; opacity: .75;
+}
+button.say-btn:hover { opacity: 1; }
+.no-tts .say-btn { display: none; }

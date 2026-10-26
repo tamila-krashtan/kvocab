@@ -26,6 +26,61 @@ function acceptedAnswers(item) {
   return set;
 }
 
+// ---------- pronunciation (browser speech synthesis) ----------
+const TTS = "speechSynthesis" in window;
+let koVoice = null;
+let voicesLoaded = false;
+let autoSay = true;
+try { autoSay = localStorage.getItem("kvocab-autosay") !== "0"; } catch (e) {}
+
+function loadVoices() {
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return; // деякі браузери віддають голоси пізніше
+  voicesLoaded = true;
+  koVoice = voices.find((v) => v.lang.replace("_", "-").toLowerCase().startsWith("ko")) || null;
+  updateTtsUi();
+}
+
+// якщо список голосів ще не прийшов, пробуємо з lang="ko-KR"
+const canSpeak = () => TTS && (!voicesLoaded || !!koVoice);
+
+function updateTtsUi() {
+  document.body.classList.toggle("no-tts", !canSpeak());
+  $("autosay-row").hidden = !canSpeak();
+  $("no-voice-note").hidden = canSpeak();
+}
+
+// що саме вимовляти: без «N», «~», українських пояснень у дужках тощо
+function spokenText(item) {
+  if (item.say) return item.say;
+  if (/[N~]/.test(item.ko) && item.alts) return item.alts[0];
+  return item.ko
+    .replace(/\(([^)]*)\)/g, (m, inner) => (/[가-힣]/.test(inner) ? inner : ""))
+    .replace(/-/g, "")
+    .replace(/\s*\/\s*/g, ", ")
+    .trim();
+}
+
+function speak(text) {
+  if (!canSpeak() || !text) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ko-KR";
+  if (koVoice) u.voice = koVoice;
+  u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+
+const maybeSay = (item) => { if (autoSay) speak(spokenText(item)); };
+
+const sayBtn = (item) =>
+  `<button type="button" class="say-btn" data-say="${escapeHtml(spokenText(item))}" title="прослухати">🔊</button>`;
+
+document.addEventListener("click", (e) => {
+  const b = e.target.closest(".say-btn");
+  if (b) speak(b.dataset.say);
+});
+
 // ---------- state ----------
 const TOPICS = [...new Set(VOCAB.flatMap((v) => v.topics))];
 let selectedTopics = new Set();
@@ -167,8 +222,10 @@ function distractors(item, n) {
 
 function renderChoice() {
   const q = $("question");
-  if (mode === "ko2tr") q.innerHTML = escapeHtml(current.ko);
-  else q.innerHTML = escapeHtml(current.tr);
+  if (mode === "ko2tr") {
+    q.innerHTML = escapeHtml(current.ko) + sayBtn(current);
+    maybeSay(current);
+  } else q.innerHTML = escapeHtml(current.tr);
 
   const opts = shuffle([current, ...distractors(current, 3)]);
   const optWrap = $("options");
@@ -247,14 +304,16 @@ function showFeedback(correct, homonym) {
   f.hidden = false;
   f.className = correct ? "good" : "bad";
   let html = correct
-    ? `✅ Правильно!`
-    : `❌ Правильна відповідь: <span class="big-answer">${escapeHtml(current.ko)}</span> — ${escapeHtml(current.tr)}`;
+    ? `✅ Правильно! ${sayBtn(current)}`
+    : `❌ Правильна відповідь: <span class="big-answer">${escapeHtml(current.ko)}</span>${sayBtn(current)} — ${escapeHtml(current.tr)}`;
   if (current.note) html += `<div class="note">💬 ${escapeHtml(current.note)}</div>`;
   if (current.pol) html += `<div class="pol">розмовно-ввічлива форма: <b>${escapeHtml(current.pol)}</b></div>`;
   if (homonym) {
     html += `<div class="homonym">⚠️ Введене слово теж є в базі: <b>${escapeHtml(homonym.ko)}</b> — ${escapeHtml(homonym.tr)}</div>`;
   }
   f.innerHTML = html;
+  // у режимі ko2tr слово вже прозвучало разом із питанням
+  if (mode !== "ko2tr") maybeSay(current);
   $("next-btn").hidden = false;
   $("next-btn").focus();
 }
@@ -266,7 +325,8 @@ function renderFlash() {
   $("flash-progress").textContent = `${flashIndex + 1} / ${queue.length}`;
   $("flash-front").hidden = false;
   $("flash-back").hidden = true;
-  $("flash-front").innerHTML = escapeHtml(item.ko);
+  $("flash-front").innerHTML = escapeHtml(item.ko) + sayBtn(item);
+  maybeSay(item);
   let back = escapeHtml(item.tr);
   if (item.note) back += `<span class="sub">💬 ${escapeHtml(item.note)}</span>`;
   if (item.pol) back += `<span class="sub">${escapeHtml(item.pol)}</span>`;
@@ -279,7 +339,9 @@ function flipFlash() {
   $("flash-back").hidden = !flashFlipped;
 }
 
-$("flash-card").onclick = flipFlash;
+$("flash-card").onclick = (e) => {
+  if (!e.target.closest(".say-btn")) flipFlash();
+};
 $("flash-flip").onclick = flipFlash;
 $("flash-prev").onclick = () => {
   flashIndex = (flashIndex - 1 + queue.length) % queue.length;
@@ -324,7 +386,7 @@ function renderList() {
       if (v.pol) extra += `<span class="wr-pol">${escapeHtml(v.pol)}</span>`;
       if (v.note) extra += `<span class="wr-note">💬 ${escapeHtml(v.note)}</span>`;
       row.innerHTML =
-        `<span class="wr-ko">${escapeHtml(v.ko)}</span>` +
+        `<span class="wr-ko">${escapeHtml(v.ko)}${sayBtn(v)}</span>` +
         `<span class="wr-tr">${escapeHtml(v.tr)}${extra}</span>`;
       wrap.appendChild(row);
     });
@@ -478,6 +540,16 @@ $("kb-toggle").onclick = () => {
 };
 
 // ---------- init ----------
+$("autosay").checked = autoSay;
+$("autosay").onchange = (e) => {
+  autoSay = e.target.checked;
+  try { localStorage.setItem("kvocab-autosay", autoSay ? "1" : "0"); } catch (err) {}
+};
+if (TTS) {
+  loadVoices();
+  speechSynthesis.addEventListener("voiceschanged", loadVoices);
+}
+updateTtsUi();
 renderTopics();
 updatePoolInfo();
 $("total-count").textContent = VOCAB.length;

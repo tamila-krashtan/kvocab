@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>kvocab — корейські слова з квокою</title>
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐹</text></svg>">
 </head>
 <body>
@@ -90,6 +90,10 @@
       </select>
       <span id="pool-info" class="pool-info"></span>
     </div>
+    <div class="setup-row">
+      <label id="autosay-row"><input id="autosay" type="checkbox"> 🔊 автоматично озвучувати корейські слова</label>
+      <span id="no-voice-note" class="pool-info" hidden>🔇 у цьому браузері немає корейського голосу, тож озвучення недоступне</span>
+    </div>
 
     <button id="start-btn" class="primary big">Почати</button>
   </section>
@@ -159,6 +163,6 @@
 </footer>
 
 <script src="data.js?v=5"></script>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
